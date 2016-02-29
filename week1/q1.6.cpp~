@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+
+
+using namespace std;
+
+int main(void)
+       {
+           FILE *fp;
+           char *line = NULL;
+           size_t len = 0;
+           ssize_t read;
+           ofstream result;
+           
+           result.open("result.cpp");
+
+           fp = fopen("hello.cpp", "r");
+           if (fp == NULL)
+               exit(EXIT_FAILURE);
+
+           while ((read = getline(&line, &len, fp)) != -1) {
+                    result<<line;
+           }
+
+           free(line);
+           exit(EXIT_SUCCESS);
+       }
+

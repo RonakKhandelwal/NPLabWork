@@ -1,0 +1,48 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+int main(){
+    int server_sockfd,client_sockfd;
+    int server_len,client_len;
+    struct sockaddr_in server_address;
+    struct sockaddr_in client_address;
+    
+    server_sockfd=socket(AF_INET,SOCK_STREAM,0);
+    server_address.sin_family=AF_INET;
+    server_address.sin_addr.s_addr=inet_addr("127.0.0.1");
+    server_address.sin_port=9734;
+    server_len=sizeof(server_address);
+    bind(server_sockfd,(struct sockaddr *)&server_address,server_len);
+    
+    listen(server_sockfd, 5);
+    while(1) {
+    int ch;
+    printf("server waiting\n");
+    
+    client_len = sizeof(client_address);
+    int pid;
+    client_sockfd = accept(server_sockfd,
+    (struct sockaddr *)&client_address, &client_len);
+    
+    pid=fork();
+    if(pid == 0){
+        read(client_sockfd,&ch,4);
+        ch=ch*ch;
+        write(client_sockfd,&ch,4);
+        close(client_sockfd);
+    }
+    else if(pid){
+        printf("PID IS %d",pid);
+    }
+    
+    else{
+        printf("Process creation failed");
+    }
+    
+}
+
+}
